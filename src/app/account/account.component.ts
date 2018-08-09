@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-account',
@@ -6,10 +7,18 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./account.component.css']
 })
 export class AccountComponent implements OnInit {
+  
 
-  constructor() { }
-
+  constructor(private router:Router) { 
+  }
+  
   ngOnInit() {
+  }
+
+  logout()
+  {
+    sessionStorage.clear();
+    this.router.navigateByUrl('/login');
   }
 
 }
