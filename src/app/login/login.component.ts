@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {Router} from '@angular/router';
-import { defaultStyleSanitizer } from '../../../node_modules/@angular/core/src/sanitization/sanitization';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -13,42 +13,33 @@ export class LoginComponent implements OnInit
 {
   username:string = '';
   password:string = '';
-  constructor(private router:Router, private form:FormsModule) { }
+  constructor(private http:HttpClient, private router:Router, private form:FormsModule) { }
 
-  ngOnInit() 
-  {
-    console.log("Testing is DOM is ready");
-
-    if (typeof(Storage) != "undefined")
-    {
-      console.log("storage ready");
-      sessionStorage.setItem("lastname", "Janssen");
-      console.log(sessionStorage.getItem("lastname"));
-    }
-    else
-    {
-      alert("Local storage not available");
-    }
-  }
+  ngOnInit() {}
 
   loginUser(event)
   {
     event.preventDefault();
-    if (this.username == "Dylan" && this.password == "123")
-    {
-      if (typeof(Storage) != "undefined")
-      {
-        sessionStorage.setItem("userID", "1");
-        sessionStorage.setItem("username", this.username);
-        sessionStorage.setItem("userDOB", "04/03/1993");
-        sessionStorage.setItem("userAge", "25");
-      }
-      this.router.navigateByUrl('/account');
-    }
-    else 
-    {
-      alert("Username or Password incorrect!");     
-    }
-  }
+    let url = '/login';
+    this.http.post(url, {username:this.username, password:this.password}).subscribe(
+      res => {
+          if (res['ok'])
+          {
+            sessionStorage.setItem("userID", res["userID"]);
+            sessionStorage.setItem("username", res["username"]);
+            sessionStorage.setItem("userDOB", res["userDOB"]);
+            sessionStorage.setItem("userAge", res["userAge"]);
+            console.log("Validated");
+            this.router.navigateByUrl('/account');
+          }
+
+          else
+          {
+            console.log("invalid");
+            alert("Username or Password incorrect!");
+          }
+        }
+    );
+   }
 
 }
